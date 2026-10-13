@@ -1,0 +1,60 @@
+name: Tag release
+
+on:
+  push:
+    branches: [main]
+    paths: [keystone-service.yaml]
+
+permissions:
+  contents: write
+
+env:
+  IMAGE: ghcr.io/keystone-codes/hello-upstream
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Read manifest
+        id: manifest
+        run: |
+          set -euo pipefail
+          version=$(grep -E '^version:' keystone-service.yaml | awk '{print $2}')
+          digest=$(grep -E '^\s+image:' keystone-service.yaml | sed -n 's/.*@\(sha256:[0-9a-f]\{64\}\)/\1/p')
+          test -n "$version"
+          test -n "$digest"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
+
+      - name: Skip if tag exists
+        id: check
+        run: |
+          v="${{ steps.manifest.outputs.version }}"
+          if git rev-parse "v$v" >/dev/null 2>&1; then echo "skip=true" >> "$GITHUB_OUTPUT"; else echo "skip=false" >> "$GITHUB_OUTPUT"; fi
+
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
+        if: steps.check.outputs.skip == 'false'
+
+      - name: Verify registry digest
+        if: steps.check.outputs.skip == 'false'
+        run: |
+          set -euo pipefail
+          v="${{ steps.manifest.outputs.version }}"
+          expected="${{ steps.manifest.outputs.digest }}"
+          actual=$(docker buildx imagetools inspect "${IMAGE}:$v" --format '{{json .Manifest.Digest}}' | tr -d '"')
+          if [ "$actual" != "$expected" ]; then
+            echo "registry digest $actual != manifest $expected"
+            exit 1
+          fi
+
+      - name: Create tag and release
+        if: steps.check.outputs.skip == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          v="${{ steps.manifest.outputs.version }}"
+          git tag "v$v"
+          git push origin "v$v"
+          gh release create "v$v" --generate-notes --notes "Image digest: \`${{ steps.manifest.outputs.digest }}\`"

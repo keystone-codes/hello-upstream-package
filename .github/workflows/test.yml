@@ -1,0 +1,70 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  KEYSTONECTL_GIT_SHA: 468e3500101fb63de32eecb7dbcf2408b92b65d4
+
+jobs:
+  test:
+    name: Lint, test, and image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: uv sync --frozen
+
+      - name: Ruff
+        run: uv run ruff check .
+
+      - name: Ruff format
+        run: uv run ruff format --check .
+
+      - name: Pytest
+        run: uv run pytest -q -m "not integration"
+
+      - name: Docker build and healthcheck
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import secrets, pathlib
+          path = pathlib.Path("hello.env")
+          path.write_text(
+              f"HELLO_BEARER_TOKEN={secrets.token_urlsafe(32)}\n"
+              f"HELLO_IDENTITY_SECRET={secrets.token_urlsafe(32)}\n"
+              f"HELLO_IDENTITY_AUDIENCE=hello-upstream\n",
+              encoding="utf-8",
+          )
+          path.chmod(0o600)
+          PY
+          docker build -t hello-upstream:ci .
+          cid=$(docker run -d --env-file ./hello.env hello-upstream:ci)
+          trap 'docker stop "$cid" >/dev/null 2>&1 || true' EXIT
+          for _ in $(seq 1 30); do
+            status=$(docker inspect -f '{{.State.Health.Status}}' "$cid" 2>/dev/null || echo starting)
+            if [ "$status" = "healthy" ]; then exit 0; fi
+            sleep 1
+          done
+          docker logs "$cid"
+          exit 1
+
+  package-lint:
+    name: Package lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: keystonectl lint
+        run: |
+          uvx --from "git+https://github.com/keystone-codes/keystonectl@${KEYSTONECTL_GIT_SHA}" \
+            keystonectl lint keystone-service.yaml
