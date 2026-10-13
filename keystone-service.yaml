@@ -1,0 +1,39 @@
+schema_version: 1
+kind: service
+name: hello-upstream
+version: 1.0.0
+publisher: keystone-codes
+summary: Demo MCP service on the low-level MCP SDK 1.x; two tools, no storage.
+homepage: https://github.com/keystone-codes/hello-upstream-package
+
+compat:
+  keystone_mcp: ">=0.5.0,<2.0"
+  contracts: [upstream-registry/1, identity-assertion/1]
+
+mcp:
+  container: mcp
+  transport: http
+  path: /mcp
+  healthz: /healthz
+  namespace: hello
+  bearer_env: HELLO_BEARER_TOKEN
+  tools: [greet, search, whoami]
+  critical: []
+
+identity:
+  signed_assertion: required
+  secret_env: HELLO_IDENTITY_SECRET
+  audience_env: HELLO_IDENTITY_AUDIENCE
+
+containers:
+  mcp:
+    image: ghcr.io/keystone-codes/hello-upstream@sha256:0000000000000000000000000000000000000000000000000000000000000000
+    port: 8081
+    env: []
+    secrets: []
+    volumes: []
+    healthcheck: {path: /healthz, interval: 10s, start_period: 10s}
+
+needs: []
+requires: []
+recommended_policy: policy.example.yaml
