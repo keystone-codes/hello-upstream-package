@@ -1,0 +1,12 @@
+# Example only. keystonectl prints this file and never merges it into your policy.
+# Tool names assume the default namespace "hello"; adjust if you renamed it.
+version: "2.0.0"
+default_deny: true
+roles:
+  hello_user:
+    description: "Call the hello-upstream demo tools."
+    allow:
+      - hello_greet
+      - hello_search
+      - hello_whoami
+critical_tools: []

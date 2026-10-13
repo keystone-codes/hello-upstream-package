@@ -1,0 +1,35 @@
+[project]
+name = "hello-upstream-package"
+version = "1.0.0"
+description = "Catalog package tests for the hello-upstream demo MCP service."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.12"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+    "httpx>=0.28",
+    "pyjwt>=2.8",
+    "mcp==1.28.1",
+    "pyyaml>=6.0",
+    "asgi-lifespan>=2.1",
+    "ruff>=0.9",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+src = [".", "tests"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+markers = [
+    "integration: Docker-backed checks",
+]
