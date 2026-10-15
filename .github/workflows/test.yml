@@ -7,9 +7,6 @@ on:
 permissions:
   contents: read
 
-env:
-  KEYSTONECTL_GIT_SHA: 468e3500101fb63de32eecb7dbcf2408b92b65d4
-
 jobs:
   test:
     name: Lint, test, and image
@@ -69,6 +66,4 @@ jobs:
           python-version: "3.12"
 
       - name: keystonectl lint
-        run: |
-          uvx --from "git+https://github.com/keystone-codes/keystonectl@${KEYSTONECTL_GIT_SHA}" \
-            keystonectl lint keystone-service.yaml
+        run: uvx keystonectl@0.1.0 lint keystone-service.yaml
