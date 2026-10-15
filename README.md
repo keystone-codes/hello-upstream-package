@@ -90,10 +90,17 @@ to match `HELLO_IDENTITY_AUDIENCE` (default `hello-upstream`). Install with
 
 ## Releasing
 
-1. Run **Release image** (`.github/workflows/release-image.yml`) with the target semver.
-2. Merge the PR it opens that pins the multi-arch digest in `keystone-service.yaml`.
-3. **Tag release** (`.github/workflows/tag-release.yml`) tags `v<version>` after digest
+1. On a branch `release/<version>`, set `version` in `keystone-service.yaml` and
+   `pyproject.toml` and add a `CHANGELOG.md` entry. Push the branch.
+2. Run **Release image** on that branch:
+   `gh workflow run release-image.yml --ref release/<version> -f version=<version>`.
+   The pull request it opens carries the version change and the digest.
+3. Merge the PR it opens that pins the multi-arch digest in `keystone-service.yaml`.
+4. **Tag release** (`.github/workflows/tag-release.yml`) tags `v<version>` after digest
    verification.
+
+See [Releasing a new version](https://github.com/keystone-codes/keystonectl/blob/main/docs/packaging-a-service.md#releasing-a-new-version)
+in the keystonectl packaging guide.
 
 Make the GHCR package public after the first publish so installs from clean hosts can
 pull the image.
