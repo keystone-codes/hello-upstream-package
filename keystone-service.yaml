@@ -1,9 +1,9 @@
 schema_version: 1
 kind: service
 name: hello-upstream
-version: 1.0.0
+version: 1.0.1
 publisher: keystone-codes
-summary: Demo MCP service on the low-level MCP SDK 1.x; two tools, no storage.
+summary: Demo MCP service on the low-level MCP SDK 1.x; three tools, no storage.
 homepage: https://github.com/keystone-codes/hello-upstream-package
 
 compat:
@@ -27,7 +27,7 @@ identity:
 
 containers:
   mcp:
-    image: ghcr.io/keystone-codes/hello-upstream@sha256:f73a378bd40c3a176df5c7cf560464827d2a9b2c38238da6674342a73bff5337
+    image: ghcr.io/keystone-codes/hello-upstream@sha256:5129e83cd5a3e44760fd71afa5d90cc0fb840e29f19cada263aaff0603464798
     port: 8081
     env: []
     secrets: []
