@@ -8,7 +8,7 @@ uses no object storage, and exposes no public HTTP paths beyond `/mcp` and `/hea
 
 Server code is derived from
 [keystone-mcp](https://github.com/keystone-codes/keystone-mcp) at
-`6b04a198101dac22815b17d5bcf55b0e1c6463d8` (`release/0.5.0`), paths:
+`f73310df8634a19406bf21972e023af9a3b44ac0` (`release/0.5.0`), paths:
 
 - `examples/hello-upstream/server.py` (adapted — see below)
 - `examples/keystone-identity/python/keystone_identity.py` (vendored byte-for-byte as

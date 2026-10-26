@@ -1,6 +1,6 @@
 """hello-upstream catalog package: low-level MCP SDK 1.x demo service.
 
-Source: ``keystone-codes/keystone-mcp`` at ``6b04a198101dac22815b17d5bcf55b0e1c6463d8``
+Source: ``keystone-codes/keystone-mcp`` at ``f73310df8634a19406bf21972e023af9a3b44ac0``
 (``release/0.5.0``), path ``examples/hello-upstream/server.py``. Adapted for the
 Keystone service catalog: mandatory bearer and signed ``X-Keystone-Identity`` (P02).
 """
