@@ -1,6 +1,6 @@
 [project]
 name = "hello-upstream-package"
-version = "1.0.1"
+version = "1.0.2"
 description = "Catalog package tests for the hello-upstream demo MCP service."
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -12,7 +12,7 @@ dev = [
     "pytest-asyncio>=0.24",
     "httpx>=0.28",
     "pyjwt>=2.8",
-    "mcp==1.28.1",
+    "mcp==1.30.0",
     "pyyaml>=6.0",
     "asgi-lifespan>=2.1",
     "ruff>=0.9",

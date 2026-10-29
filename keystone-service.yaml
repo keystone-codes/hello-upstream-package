@@ -1,7 +1,7 @@
 schema_version: 1
 kind: service
 name: hello-upstream
-version: 1.0.1
+version: 1.0.2
 publisher: keystone-codes
 summary: Demo MCP service on the low-level MCP SDK 1.x; three tools, no storage.
 homepage: https://github.com/keystone-codes/hello-upstream-package
