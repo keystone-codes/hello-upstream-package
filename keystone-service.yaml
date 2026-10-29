@@ -27,7 +27,7 @@ identity:
 
 containers:
   mcp:
-    image: ghcr.io/keystone-codes/hello-upstream@sha256:5129e83cd5a3e44760fd71afa5d90cc0fb840e29f19cada263aaff0603464798
+    image: ghcr.io/keystone-codes/hello-upstream@sha256:add7aa7f0dbedebf3df088e31cf803fe5585edb3fd1d1f5b72d0ced186601c0c
     port: 8081
     env: []
     secrets: []
